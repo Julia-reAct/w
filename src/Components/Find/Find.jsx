@@ -1,20 +1,20 @@
 import React from 'react'
-import {Field, reduxForm} from "redux-form";
-import {connect} from "react-redux";
-import {getCards, saveCards} from "../../Redux/ReducerCards";
-import ShortCards from './ShortCards';
-import Keys from './Keys';
+import {Field, reduxForm} from 'redux-form'
+import {connect} from 'react-redux'
+import {getCards, updateCard, deleteCard, addCard} from '../../Redux/ReducerCards'
+import ShortCards from './ShortCards'
+import Keys from './Keys'
+import styles from './Find.module.css'
 
-
-const CityForm =({handleSubmit} ) => { 
-    return(
-        <form onSubmit={handleSubmit}>
+const CityForm = ({handleSubmit}) => {
+    return (
+        <form onSubmit={handleSubmit} className={styles.form}>
             <div>
                 <Field
-                type='text' 
-                component={(props)=>< input {...props.input}  />}
-                 name="name"
-                  placeholder='Enter name' />
+                    type='text'
+                    component={(props) => < input {...props.input} placeholder='Enter city name'/>}
+                    name="name"
+                />
             </div>
             <div>
                 <button>Send</button>
@@ -22,48 +22,60 @@ const CityForm =({handleSubmit} ) => {
         </form>
     )
 }
- const AllReduxForm= reduxForm({form: 'cards'})(CityForm)
 
+const AllReduxForm = reduxForm({form: 'cards'})(CityForm)
 
-const NameCardsFind = (props) => {
-    
-    let state1 = props.parametr 
-   
-    let shortcards = state1.map(c => <ShortCards saveCards={props.saveCards} getCards={props.getCards} key={c.id} name={c.name} main={c.main} weather={c.weather} clouds={c.clouds} wind={c.wind}  id={c.id} />)
-    
-    let state2 = props.savecity 
-    if(!state2.length){
-        const storegdata = JSON.parse(localStorage.getItem('inform') || '{}')
-        state2 = Object.values(storegdata)
-    }
-    let shortcards2 = state2.map(c => <Keys getCards={props.getCards} key={c.id} name={c.name} main={c.main} weather={c.weather} clouds={c.clouds} wind={c.wind} id={c.id} />)
-    
-      const onSubmit = (FormData) =>{
+const Finder = (props) => {
+    let shortcards = Object
+        .values(props.cities)
+        .map(c => <ShortCards
+            getCards={props.getCards}
+            addCard={props.addCard}
+            key={c.id}
+            name={c.name}
+            main={c.main}
+            weather={c.weather}
+            clouds={c.clouds}
+            wind={c.wind}
+            id={c.id}
+        />)
+
+    let shortcards2 = Object
+        .values(props.citiesSaved)
+        .map(c => <Keys
+            updateCard={props.updateCard}
+            deleteCard={props.deleteCard}
+            key={c.id}
+            name={c.name}
+            main={c.main}
+            weather={c.weather}
+            clouds={c.clouds}
+            wind={c.wind}
+            id={c.id}
+        />)
+
+    const onSubmit = (FormData) => {
         props.getCards(FormData.name)
-
     }
     return (
-        <div >
-            <div>
-            <AllReduxForm onSubmit={onSubmit} />
-            </div>        
-            {shortcards}       
-            <div>
-            {shortcards2}
+        <div className={styles.find}>
+            <AllReduxForm onSubmit={onSubmit}/>
+            {shortcards.length ? <h3>Current weather</h3> : ''}
+            <div className={styles.cardsList}>
+                {shortcards}
+            </div>
+            {shortcards2.length ? <h3>Saved cities</h3> : ''}
+            <div className={styles.cardsList}>
+                {shortcards2}
             </div>
         </div>
-    
-    );
+
+    )
 }
-const mapStateToProps=(state)=>({ 
-    
-    parametr: state.cardspage.parametr,
-    savecity: state.cardspage.savecity
+
+const mapStateToProps = (state) => ({
+    cities: state.cardspage.cities,
+    citiesSaved: state.cardspage.citiesSaved
 })
 
- 
-
-export default connect(mapStateToProps, {getCards, saveCards }) (NameCardsFind)
-
-//const shortcards = props.weatherall.map(c =><ShortCards name={c.name} main={c.main} weather={c.weather}/>)
-// {shortcards}
+export default connect(mapStateToProps, {getCards, updateCard, deleteCard, addCard})(Finder)

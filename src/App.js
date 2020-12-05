@@ -8,8 +8,8 @@ import Finder from './Components/Find/Find';
 const App = (props)=>{
   return (
     <div>
-      <Route path='/' exact component={Finder} />
-       <Route path='/card/:cityName' component={CardCity} />
+      <Route path='/w' exact component={Finder} />
+       <Route path='/w/card/:cityName' component={CardCity} />
     </div>
 
   );

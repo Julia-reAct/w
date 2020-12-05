@@ -11,7 +11,7 @@ const ShortCards=(props)=>{
   let element = props.weather.map(w => <Weather key={w.id} description={w.description} icon={w.icon} />)
  
   return(
-      <div className={styles.card}>
+      <NavLink to={'/w/card/' + props.name} className={styles.card}>
           <div className={styles.city}>
               {props.name}
           </div>
@@ -30,7 +30,7 @@ const ShortCards=(props)=>{
                   </button>
               </div>
           </div>
-      </div>
+      </NavLink>
   )
 }
 
